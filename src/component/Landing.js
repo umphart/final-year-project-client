@@ -12,8 +12,8 @@ const Landing = (props) => {
          
       <Jumbotron>
         <h1 className="display-3">WELCOME!   <b> BUK FCSIT.</b></h1>
-        <p className="lead">This is a Design and Implementation of Automated Course Allocation And Venue Assignment for 
-        Faculty of computer Science And Informatin Technology. Bayero University Kano  
+        <p className="lead"> Automated Course Allocation System for 
+        Faculty of computer Science And Informatin Technology (FCSIT). Bayero University Kano  
        </p>
         <hr className="my-2" />
         <p>It uses to eliminate Manual Course Allocation for Lecturers whithin the Faculty.</p>

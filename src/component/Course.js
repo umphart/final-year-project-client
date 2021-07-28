@@ -4,7 +4,7 @@ import Nav from "./Nav"
 import 'bootstrap/dist/css/bootstrap.css';
 
 import { Button,
-  Table,
+  Alert,
   InputGroup, 
   InputGroupText, 
   InputGroupAddon,
@@ -17,21 +17,15 @@ function Course() {
   const [cTitle, setcTitle] = useState('');
   const [courseList, setCourseList] = useState([]);
   const [level, setLevel] = useState('');
-  const [leveloneCourse, setlevelone] = useState([{'MTH1301':'Maths', 'CSC1311':'Probability', 'CSC1301':"Calculus"}]);
-  const [levelTwoCourse, setleveltwo] = useState([{'MTH1301':'Maths', 'CSC1311':'Probability', 'CSC1301':"Calculus"}]);
-  const [levelThreeCourse, setlevelthree] = useState([{'MTH1301':'Maths', 'CSC1311':'Probability', 'CSC1301':"Calculus"}]);
-  const [levelFourCourse, setlevelfour] = useState([{'MTH1301':'Maths', 'CSC1311':'Probability', 'CSC1301':"Calculus"}]);
-  
-
-  useEffect(()=>{
-    Axios.get('http://localhost:9000/api/get-course').then((response)=>{
-      setCourseList(response.data.result)
-    })
-  },[])
-
-  const submitButton = ()=>{
-    if (!cCode || !cCore ||!cTitle || !level) return
-     Axios.post('http://localhost:9000/api/insert-leveloneCourse', {
+ 
+  const submitButton = (e)=>{
+    e.preventDefault();
+    if (!cCode || !cCore ||!cTitle || !level)
+     return document.querySelector('#wa-alert').style.visibility = 'visible',
+     setTimeout(() => { document.querySelector('#wa-alert').style.visibility = 'hidden'
+    }, 3000);
+    
+     Axios.post('http://localhost:9000/api/insert-course', {
        cCode:cCode, 
        cTitle: cTitle,
        cCore:cCore,
@@ -39,16 +33,34 @@ function Course() {
       }).then(_result=>{
         setCourseList(
           [...courseList, {cCode:cCode, cTitle:cTitle, cCore:cCore, level:level }])
+          document.querySelector('#success-alert').style.visibility = 'visible'
+          setTimeout(() => {
+            document.querySelector('#success-alert').style.visibility = 'hidden'
+          }, 3000);
       }).catch(err=>{
-        console.log(err.response.data.err.sqlMessage);
+        if (err.response.data.err.errno === 1062) {
+          //show alert
+          document.querySelector('#duplicate-alert').style.visibility = 'visible'
+          setTimeout(() => {
+            document.querySelector('#duplicate-alert').style.visibility = 'hidden'
+          }, 3000);
+
+        }
+        console.log(err.response.data.err.errno);
       })
-    
+     
   };
- const deleteCourse =(id)=>{
-    Axios.delete(`http://localhost:9000/api/delete-course/${id}`)
-      setCourseList(courseList.filter((val)=>{
-        return val.id !== id
-      }))
+ const assign =()=>{
+    Axios.get('http://localhost:9000/api/assign-all-course')
+      .then(res=>{
+        document.querySelector('#success-alert').style.visibility = 'visible'
+          setTimeout(() => {
+            document.querySelector('#success-alert').style.visibility = 'hidden'
+          }, 3000);
+      })
+      .catch(err=>{
+        console.log(err);
+      })
  }
  
 
@@ -56,19 +68,24 @@ function Course() {
     <div>
       <Nav/>
       <h3>FACULTY OF COMPUTER SCIENCE AND INFORMATION TECHNOLOGY</h3>
-   
+      <div id="success-alert" style={{visibility:'hidden'}}>
+          <Alert color="success">
+          Successfully Added to the Database !
+          </Alert>
+         </div>
 
     <div className="body">
     <div className="form">
     <InputGroup>
         <InputGroupAddon addonType="prepend">
-          <InputGroupText>Course Code</InputGroupText>
+          <InputGroupText>Course Code:</InputGroupText>
         </InputGroupAddon>
         <Input  className="input" type="text" 
           name="cCode"
           required
           onChange={(e)=>{
          setcCode(e.target.value)
+         e.preventDefault();
        }} 
      />
       
@@ -76,7 +93,7 @@ function Course() {
       {" "}
       <InputGroup>
         <InputGroupAddon addonType="prepend">
-          <InputGroupText>Course Title</InputGroupText>
+          <InputGroupText>Course Title:</InputGroupText>
         </InputGroupAddon>
         <Input required="true"
         className="input" 
@@ -85,28 +102,31 @@ function Course() {
          size="" 
          onChange={(e)=>{
       setcTitle(e.target.value)
+      e.preventDefault();
 
     }} />
       </InputGroup>
       <InputGroup>
         <InputGroupAddon addonType="prepend">
-          <InputGroupText># Registered</InputGroupText>
+          <InputGroupText>Core:</InputGroupText>
         </InputGroupAddon>
-        <Input  className="input" type="number" min="0"
+        <Input  className="input" type="number" min="1" max="3"
           name="reg"
           required
           onChange={(e)=>{
          setcCore(e.target.value)
+         e.preventDefault();
        }} 
      />
        
       </InputGroup>
       <InputGroup>
         <InputGroupAddon addonType="prepend">
-          <InputGroupText>Level</InputGroupText>
+          <InputGroupText>Level:</InputGroupText>
         </InputGroupAddon>
     <select  onChange={(e)=>{
          setLevel(e.target.value)
+         e.preventDefault();
        }} >
         <option selected>----</option>
        <option value="Level 100">Level 100</option>
@@ -120,49 +140,22 @@ function Course() {
       </div>
       {" "}
       <Button variant="contained" color="primary" onClick={submitButton} >Add Course</Button>
-      {/* <input className="inpt" placeholder="Search Course"/> */}
+      ----------------------------------------------------------------------------
+      <Button variant="contained" color="primary" onClick={assign} >Assigned Course To Lecturers</Button>
+      
    {" "}
-    
-   <Table>
-        <tr>
-          <th width="300">Course Code</th>
-          <th width="600">Course Title</th>
-          <th width="200"># Register</th>
-          <th width="150">Level</th>
-          <th width="120">Delete</th>
-        </tr>
-    </Table>
-   
-    {" "}
-    {courseList.map((val, i)=>{
-      return(
-        <div className="card" key={i}>
-     
-    
-          <Table height="50">
+         
         
-        <tr>
-          
-          <td width="350">{val.cCode} </td>
-          <td width="650">{val.cTitle} </td>
-          <td width="250">{val.cCore}</td>
-          <td width="250">{val.level}</td>
-          
-          <td width="120" scope="row"><Button color="danger" className="primary" onClick={
-          () =>deleteCourse(val.id)
-          
-          }>Delete</Button></td>
-          
-        </tr>
-   
-    </Table>
-        
-       
-      </div>
-     );
-    })}
-        
-       
+         <div id="duplicate-alert" style={{visibility:'hidden'}}>
+         <Alert color="danger">
+         Already have this record in Database !
+      </Alert>
+         </div>
+         <div id="wa-alert" style={{visibility:'hidden'}}>
+         <Alert color="danger">
+        please Fill All input  !!!
+      </Alert>
+         </div>
       </div>
     
   

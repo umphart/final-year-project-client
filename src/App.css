@@ -10,6 +10,9 @@
   margin: auto;
  
 }
+.wrapper {
+  padding: 0px;
+}
 .App{
   margin: 20px;
 }
@@ -79,4 +82,10 @@ nav{
 #btn1{
   width: 218px;
   height: 60px;
+}
+
+@media print {
+  nav, #print, .container {
+    display: none;
+  }
 }

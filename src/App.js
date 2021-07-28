@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom"
 import { Row, Col } from 'reactstrap';
 import './App.css';
@@ -19,20 +20,26 @@ import LevelFour from "./component/levels/level-four";
 import ComScience from "./component/Departments/ComScience"
 import SoftwareEngr from "./component/Departments/SoftwareEngr";
 import CyberSecurity from "./component/Departments/CyberSecurity"
-import Itechnology from "./component/Departments/Itechnology"
-
+import Itechnology from "./component/Departments/Itechnology";
+import Login from './component/login';
+import useToken from './component/userToken';
 
 function App() {
-  return (<Router>
+  const [token, setToken] = useState();
 
-  
- 
-<div>
+  if(!token) {
+    return <Login setToken={setToken} />
+  }
+
+return (<div>
+<Router> 
+<div className="wrapper">
     <Header/>
     
      <Row>
 <Col sm="2"><RightDash/></Col>
-  <Col xs="2" sm="8">
+  <Col xs="1" sm="8">
+
     <Route path="/nav" component={Nav}/>
     <Route path="/dashboard" component={Dashboard}/>
     <Route path="/" exact component={Landing} />
@@ -56,7 +63,7 @@ function App() {
 
 </div>
 </Router>
-
+     </div>
   );
 }
 

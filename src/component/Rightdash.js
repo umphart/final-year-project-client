@@ -20,12 +20,12 @@ import "../App.css"
        }; 
        setInterval(updateTime,1000)
         return(
-            <div className="container">
-                <div className="time"> 
+            <div className="containr">
+                {/* <div className="time"> 
                 <h1>Todays Event</h1>
-                <h2>{date}</h2> 
-               <h2>{currentTime}</h2>
-                </div>
+                <h2>{date}</h2>  */}
+               {/* <h2>{currentTime}</h2> */}
+                
             </div>
         )
     }

@@ -10,17 +10,6 @@ function StatusCheck1(){
   })
 },[])
   return <div>
-  <Button color="primary" id="toggler" style={{ marginBottom: '1rem' }}>
-  Check Status
-  </Button>
-  <UncontrolledCollapse toggler="#toggler">
-    <Card>
-      <CardBody>
-      <p>This Lecturer Was assigned to:</p>
-      {courseList.map((val)=>{
-      return(
-        <div className="course">
-      <h6>{val.cCode}</h6> 
     </div>
      );
     })}
